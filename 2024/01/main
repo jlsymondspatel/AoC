@@ -1,0 +1,51 @@
+#!/bin/bash
+
+# First, get each column of input and store in separate files
+awk '{print $1}' ./input.txt > ./col1.txt
+awk '{print $2}' ./input.txt > ./col2.txt
+
+echo "01: Stored input columns as separate files."
+
+# Then sort each column
+sort -n -o ./col1-sort.txt ./col1.txt
+sort -n -o ./col2-sort.txt ./col2.txt
+
+echo "02: Each column is now sorted."
+
+# Then find the distances between all location IDs
+## Function to find abs difference between two numbers
+abs_diff()
+{
+    if (( ($1 - $2) < 0 ))
+    then
+        echo "$(( $2 - $1 ))"
+    else
+        echo "$(( $1 - $2 ))"
+    fi
+}
+
+## loop through each sorted line and find distance
+nlines=$(wc -l < ./input.txt)
+
+for (( i=1; i <= $nlines; i++ ))
+do
+    loc_ID_1=$(sed -n "${i}p" ./col1-sort.txt)
+    loc_ID_2=$(sed -n "${i}p" ./col2-sort.txt)
+
+    abs_diff $loc_ID_1 $loc_ID_2
+done > ./dist-list.txt
+
+echo "03: Found the distance between each sorted column ID."
+
+# sum list of distances
+let loc_ID_dist=0
+
+for (( i=1; i <= $nlines; i++ ))
+do
+    let loc_ID_dist_sum+=$(sed -n "${i}p" ./dist-list.txt)
+    
+done
+
+echo $loc_ID_dist_sum > ./dist-sum.txt
+
+echo "04: Found sum of distances."
