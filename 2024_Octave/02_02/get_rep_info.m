@@ -23,6 +23,9 @@ function rep_info = get_rep_info (rep)
     # initialise mask of violating diff sign values
     rep_info.mask_diffs_sign = [];
 
+    # get the moving pair sum of diffs vector
+    rep_info.diffs_moving_pair_sum = sum ([rep_info.diffs(1:(end-1)); rep_info.diffs(2:end)])
+
     ####################
     # Obtaining result #
     ####################

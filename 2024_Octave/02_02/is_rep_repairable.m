@@ -9,41 +9,21 @@ function rep_repairable = is_rep_repairable (rep_info)
         # do nothing
     endif
 
-    ###################################
-    # look at the minimum differences #
-    ###################################
+    # set the answer to false until proven otherwise
+    rep_repairable = false;
+
+    #########################################################################################################
+    # look at the minimum differences, maximum differences, and increasing/decreasing gradient changes#
+    #########################################################################################################
     
-    # set repairable_bool to 0 if more than 1 violation of minimum diff
-    if (rep_info.viols(1) > 1)
-        rep_repairable = false;
-        return;
-    else
-        # do nothing
-    endif
-    
-    ###################################
-    # look at the maximum differences
-    ###################################
+    # 1. set repairable_bool to true if less than or equal to 1 violation of minimum diff;
+    # 2. set repairable_bool to true if less than or equal to 2 violations of maximum diff
+    # this is because a perturbation can have 2 max diff violations;
+    # 3. set repairable_bool to true if less than or equal to 1 violation of gradient changes;
 
-    # set repairable_bool to 0 if more than 2 violations of maximum diff
-    # this is because a perturbation can have 2 max diff violations
-    if (rep_info.viols(2) > 2)
-        rep_repairable = false;
+    if (sum (rep_info.viols <= [1; 2; 1]) <= 1)
+        rep_repairable = true;
         return;
-    else
-        # do nothing
-    endif
-
-    ###################################
-    # look at increasing/decreasing gradient changes
-    ###################################
-
-    # set repairable_bool to 0 if more than 1 violation of gradient changes
-    if (rep_info.viols(3) > 1)
-        rep_repairable  = false;
-        return;
-    else
-        # do nothing
     endif
 
     ###################################
