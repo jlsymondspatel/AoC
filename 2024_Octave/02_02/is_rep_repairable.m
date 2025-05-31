@@ -17,9 +17,6 @@ function rep_repairable = is_rep_repairable (rep_info)
         return;
     endif
 
-    # set the answer to false until proven otherwise
-    rep_repairable = false;
-
     # set repair limit
     repair_lim = 1;
 
@@ -29,12 +26,15 @@ function rep_repairable = is_rep_repairable (rep_info)
         if (is_repair_successful == true)
             rep_info = get_rep_info (new_rep);
         else
+            rep_repairable = false;
             break;
         endif
 
         if (rep_info.is_safe == true)
             rep_repairable = true;
             break;
+        else
+            rep_repairable = false;
         endif
     endfor
 

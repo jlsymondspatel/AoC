@@ -4,29 +4,32 @@ clear;
 ## Read data from the input file
 reps = dlmread ("./input/input.txt", "emptyvalue", NaN);
 
-## initialise counter for unsafe reports
-n_reps_unsafe = 0;
+## initialise mask for safe reports
+reps_is_safe_mask = zeros (size (reps, 1), 1);
 
-for rep = reps'
+for i = 1:(size (reps, 1))
     # make the rep a row vector for readability
-    rep = rep';
+    rep = reps(i,:);
 
     # remove NaNs in the report
     rep = rep(!isnan (rep));
 
-    # get the number of unsafe differences between levels
-    n_levs_unsafe = get_n_levs_unsafe (rep);
+    # get the info of the rep (original)
+    rep_info_original = get_rep_info (rep);
 
-    # check if number of unsafe levels is in tolerance
-    if (n_levs_unsafe > 1)
-        n_reps_unsafe += 1;
+    if (rep_info_original.is_safe == true)
+        reps_is_safe_mask(i) = true;
     else
-        # do nothing
-    endif
+        if (is_rep_repairable (rep_info_original) == true)
+            reps_is_safe_mask(i) = true;
+        else
+            reps_is_safe_mask(i) = false;
+        endif
+    end
 endfor
 
 ## Find the number of safe reports
-n_reps_safe = size (reps, 1) - n_reps_unsafe;
+n_reps_safe = sum (reps_is_safe_mask);
 
 ## disp the total number of safe reports
 disp ("--------------------------------------------");
